@@ -1,11 +1,13 @@
 package com.example.bitpanda.ui
 
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.example.bitpanda.model.BitpandaData
 import com.example.bitpanda.remote.DummyWebService
 import com.example.bitpanda.repository.Repository
+import com.example.bitpanda.ui.components.FilterSpinner
 import java.lang.IllegalStateException
 
 class BitpandaViewModel(private val repository: Repository): ViewModel() {
@@ -13,8 +15,29 @@ class BitpandaViewModel(private val repository: Repository): ViewModel() {
     val bitpandaDataLiveData
         get() = bitpandaData
 
+    private val _selectedBitpandaData = MutableLiveData<BitpandaData>()
+    val selectedBitpandaData: LiveData<BitpandaData>
+        get() = _selectedBitpandaData
+
     fun fetchData() {
         bitpandaData.value = repository.getBitpandaData()
+    }
+
+    fun fetchFilteredData(filterOption: FilterSpinner.Option) {
+        when (filterOption) {
+            FilterSpinner.Option.ALL ->
+                fetchData()
+            FilterSpinner.Option.FIATS ->
+                bitpandaData.value = repository.getWalletsInFiatCurrency()
+            FilterSpinner.Option.METALS ->
+                bitpandaData.value = repository.getWalletsInMetalCurrency()
+            FilterSpinner.Option.CRYPTOCOINS ->
+                bitpandaData.value = repository.getWalletsInCryptocoinCurrency()
+        }
+    }
+
+    fun onBitpandaDataSelected(bitpandaData: BitpandaData) {
+        _selectedBitpandaData.value = bitpandaData
     }
 }
 

@@ -9,6 +9,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.navigation.findNavController
 import androidx.recyclerview.widget.*
 import com.example.bitpanda.R
 import com.example.bitpanda.databinding.FragmentMainBinding
@@ -38,15 +39,31 @@ class MainFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        adapter = WalletsAdapter()
-        binding.walletsList.addItemDecoration(DividerItemDecoration(context, DividerItemDecoration.VERTICAL))
-        binding.walletsList.layoutManager = LinearLayoutManager(context)
-        binding.walletsList.adapter = adapter
-
-        viewModel.bitpandaDataLiveData.observe(viewLifecycleOwner, {
-            adapter.submitList(it)
-        })
+        initWalletsList()
+        binding.filterSpinner.filterOption.observe(viewLifecycleOwner, viewModel::fetchFilteredData)
+        viewModel.bitpandaDataLiveData.observe(viewLifecycleOwner, adapter::submitList)
         viewModel.fetchData()
+    }
+
+    private fun initWalletsList() {
+        adapter = WalletsAdapter(::showWalletDetails)
+        binding.walletsList.apply {
+            addItemDecoration(
+                DividerItemDecoration(
+                    context,
+                    DividerItemDecoration.VERTICAL
+                )
+            )
+            layoutManager = LinearLayoutManager(context)
+            adapter = this@MainFragment.adapter
+        }
+    }
+
+    private fun showWalletDetails(bitpandaData: BitpandaData) {
+        val navController = view?.findNavController()
+
+        viewModel.onBitpandaDataSelected(bitpandaData)
+        navController?.navigate(R.id.action_mainFragment_to_detailsFragment)
     }
 
     override fun onDestroyView() {
@@ -55,12 +72,8 @@ class MainFragment : Fragment() {
     }
 }
 
-class WalletViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-    val walletTitle: TextView = view.findViewById(R.id.wallet_title)
-    val currencyLogo: ImageView = view.findViewById(R.id.currency_logo)
-    val balance: TextView = view.findViewById(R.id.balance)
-}
-class WalletsAdapter : ListAdapter<BitpandaData, WalletViewHolder>(DIFF_CALLBACK) {
+class WalletsAdapter(val callback: (BitpandaData) -> Unit) :
+    ListAdapter<BitpandaData, WalletsAdapter.WalletViewHolder>(DIFF_CALLBACK) {
     companion object {
         val DIFF_CALLBACK = object : DiffUtil.ItemCallback<BitpandaData>() {
             override fun areItemsTheSame(oldItem: BitpandaData, newItem: BitpandaData): Boolean {
@@ -91,5 +104,12 @@ class WalletsAdapter : ListAdapter<BitpandaData, WalletViewHolder>(DIFF_CALLBACK
         GlideToVectorYou.init()
             .with(holder.currencyLogo.context)
             .load(Uri.parse(bitpandaData.currency.logo), holder.currencyLogo)
+        holder.itemView.setOnClickListener { callback.invoke(bitpandaData) }
+    }
+
+    inner class WalletViewHolder(view: View) : RecyclerView.ViewHolder(view) {
+        val walletTitle: TextView = view.findViewById(R.id.wallet_title)
+        val currencyLogo: ImageView = view.findViewById(R.id.currency_logo)
+        val balance: TextView = view.findViewById(R.id.balance)
     }
 }

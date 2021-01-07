@@ -34,6 +34,24 @@ class Repository(val webservice: DummyWebService) {
         return fetchBitpandaData()
     }
 
+    fun getWalletsInFiatCurrency(): List<BitpandaData> {
+        val bitpandaDataList = fetchBitpandaData()
+
+        return bitpandaDataList.filter { it.currency is Fiat }
+    }
+
+    fun getWalletsInMetalCurrency(): List<BitpandaData> {
+        val bitpandaDataList = fetchBitpandaData()
+
+        return bitpandaDataList.filter { it.currency is Metal }
+    }
+
+    fun getWalletsInCryptocoinCurrency(): List<BitpandaData> {
+        val bitpandaDataList = fetchBitpandaData()
+
+        return bitpandaDataList.filter { it.currency is Cryptocoin }
+    }
+
     private fun fetchBitpandaData(): List<BitpandaData> {
         val wallets = webservice.getWallets()
             .filter { !it.deleted }
