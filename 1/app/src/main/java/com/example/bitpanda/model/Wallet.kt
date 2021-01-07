@@ -21,6 +21,17 @@ sealed class Wallet(
     fun addBalance(amount: Double) {
         this.balance += amount
     }
+
+    override fun equals(other: Any?): Boolean {
+        if (other == null || other !is Wallet)
+            return false
+
+        return this.id == other.id &&
+                this.name == other.name &&
+                this.balance == other.balance &&
+                this.isDefault == other.isDefault &&
+                this.deleted == other.deleted
+    }
 }
 
 data class MetalWallet(

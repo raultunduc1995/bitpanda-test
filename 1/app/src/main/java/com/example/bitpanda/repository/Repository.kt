@@ -4,18 +4,6 @@ import com.example.bitpanda.model.*
 import com.example.bitpanda.remote.DummyWebService
 
 class Repository(val webservice: DummyWebService) {
-    private val bitpandaDatas = mutableListOf<BitpandaData>()
-
-    init {
-        val wallets = webservice.getWallets()
-        val currencies = webservice.getCurrencies()
-
-        wallets.forEach { wallet ->
-            bitpandaDatas.add(
-                BitpandaData(wallet, currency = getCurrency(wallet, currencies))
-            )
-        }
-    }
 
     private fun getCurrency(
         wallet: Wallet,
@@ -30,15 +18,29 @@ class Repository(val webservice: DummyWebService) {
     }
 
     fun findBySymbol(symbol: String): List<BitpandaData> {
-        return bitpandaDatas.filter { it.currency.symbol == symbol }
+        val bitpandaDataList = fetchBitpandaData()
+
+        return bitpandaDataList.filter { it.currency.symbol == symbol }
     }
 
 
     fun findByName(name: String): List<BitpandaData> {
-        return bitpandaDatas.filter { it.currency.name == name }
+        val bitpandaDataList = fetchBitpandaData()
+
+        return bitpandaDataList.filter { it.currency.name == name }
     }
 
     fun getBitpandaData(): List<BitpandaData> {
-        return bitpandaDatas
+        return fetchBitpandaData()
+    }
+
+    private fun fetchBitpandaData(): List<BitpandaData> {
+        val wallets = webservice.getWallets()
+            .filter { !it.deleted }
+        val currencies = webservice.getCurrencies()
+
+        return wallets.map { wallet ->
+            BitpandaData(wallet, currency = getCurrency(wallet, currencies))
+        }
     }
 }
