@@ -2,10 +2,7 @@ package com.example.bitpanda.remote
 
 import com.example.bitpanda.model.*
 
-class DummyData {
-
-    companion object {
-
+object DummyData {
         val dummyMetalWalletList = listOf(
             MetalWallet(
                 id = "1",
@@ -142,6 +139,4 @@ class DummyData {
                 logo = "https://bitpanda-assets.s3-eu-west-1.amazonaws.com/static/cryptocoin/xpd.svg"
             )
         )
-    }
-
 }
