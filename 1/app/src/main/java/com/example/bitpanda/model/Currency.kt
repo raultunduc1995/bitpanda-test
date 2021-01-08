@@ -19,13 +19,13 @@ sealed class Currency(
     }
 }
 
-data class Cryptocoin(
-    override val precision: Int = 4,
-    override val name: String = "",
-    override val symbol: String = "",
-    override val id: String = "",
-    override val logo: String = "",
-    val price: Double = 0.0,
+sealed class ValuableCurrency(
+    override val precision: Int,
+    override val name: String,
+    override val symbol: String,
+    override val id: String,
+    override val logo: String,
+    open val price: Double,
 ) : Currency(precision, name, symbol, id, logo)
 
 data class Fiat(
@@ -36,11 +36,20 @@ data class Fiat(
     override val logo: String = ""
 ) : Currency(precision, name, symbol, id, logo)
 
+data class Cryptocoin(
+    override val precision: Int = 4,
+    override val name: String = "",
+    override val symbol: String = "",
+    override val id: String = "",
+    override val logo: String = "",
+    override val price: Double = 0.0,
+) : ValuableCurrency(precision, name, symbol, id, logo, price)
+
 data class Metal(
     override val precision: Int = 3,
     override val name: String = "",
     override val symbol: String = "",
     override val id: String = "",
     override val logo: String = "",
-    val price: Double = 0.0,
-) : Currency(precision, name, symbol, id, logo)
+    override val price: Double = 0.0,
+) : ValuableCurrency(precision, name, symbol, id, logo, price)

@@ -2,10 +2,16 @@
     <string name="app_name">Bitpanda</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="balance">Balance</string>
+    <string name="currency">Currency</string>
+    <string name="price_per_unit">Price/Unit</string>
+    <string name="total">Total</string>
     <string-array name="wallet_filters">
         <item>All</item>
         <item>Fiats</item>
         <item>Metals</item>
         <item>Cryptocoins</item>
     </string-array>
+
+    <string name="euro_symbol" translatable="false">EUR</string>
 </resources>

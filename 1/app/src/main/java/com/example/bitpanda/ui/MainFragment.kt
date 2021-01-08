@@ -14,6 +14,7 @@ import androidx.recyclerview.widget.*
 import com.example.bitpanda.R
 import com.example.bitpanda.databinding.FragmentMainBinding
 import com.example.bitpanda.model.BitpandaData
+import com.example.bitpanda.model.Metal
 import com.github.twocoffeesoneteam.glidetovectoryou.GlideToVectorYou
 
 class MainFragment : Fragment() {
@@ -95,16 +96,26 @@ class WalletsAdapter(val callback: (BitpandaData) -> Unit) :
 
     override fun onBindViewHolder(holder: WalletViewHolder, position: Int) {
         val bitpandaData = getItem(position)
+        val (wallet, currency) = bitpandaData
 
-        holder.walletTitle.text = bitpandaData.wallet.name
-        holder.balance.text = StringBuilder()
-            .append(bitpandaData.wallet.balance)
-            .append(bitpandaData.currency.symbol)
-            .toString()
+        holder.walletTitle.text = wallet.name
+        holder.balance.text = getBalanceDescription(bitpandaData)
         GlideToVectorYou.init()
             .with(holder.currencyLogo.context)
-            .load(Uri.parse(bitpandaData.currency.logo), holder.currencyLogo)
+            .load(Uri.parse(currency.logo), holder.currencyLogo)
         holder.itemView.setOnClickListener { callback.invoke(bitpandaData) }
+    }
+
+    private fun getBalanceDescription(bitpandaData: BitpandaData): String {
+        val (wallet, currency) = bitpandaData
+        val balance = StringBuilder()
+            .append(wallet.balance)
+            .append(currency.symbol)
+
+        if (currency is Metal)
+            balance.append(" (${currency.name})")
+
+        return balance.toString()
     }
 
     inner class WalletViewHolder(view: View) : RecyclerView.ViewHolder(view) {
