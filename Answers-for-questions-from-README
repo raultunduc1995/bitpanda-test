@@ -9,13 +9,14 @@ https://play.google.com/store/apps/details?id=com.rituals.app.prod&hl=en_US&gl=U
 https://play.google.com/store/apps/details?id=com.sprii.shop&hl=en_US&gl=US
 I chose these apps because I learned from them a lot and they all were challenging.
 Each of these apps has its own purpose and are used worldwide.
-I believe that what I learned most from these apps are new architectures, programming skills and approaches, think quicker, how to give my best in team-work and, best of all, always search for best solutions in licenced resources
+I believe that what I learned most from these apps are new architectures, programming skills and approaches, think quicker, how to give my best in team-work and, best of all, always search for best solutions from licenced resources
 
 
 B. How would you handle this situation?
    The Product Owner comes over to you and asks for an implementation with which he can see the performance of his crypto wallet over the past weeks. He is an iOS user and doesn't know the Android platform too well. How would you approach this task?
-R:
-
+R: First of all, I will explain to him that I need to make the implementation for Android platform. I will tell him that I will make a demo as soon as possible with a prototype of the feature. Then I will make a presentation about what I worked on and explain everything to him step-by-step.
+Because he is an iOS user is not much of a problem, because I can introduce him to android platform and make sure he understands everything related to the requested feature.
+In order to make this simple, I can implement a tutorial for the users in need.
 
 C. What kind of (technical) projects do you work on in your spare time?
-R: In spare time I usually read from this site: https://developer.android.com/ and different articles from https://medium.com/ and create sample projects in order to test what I read.
+R: In spare time I usually read from different technical sites and create sample projects based on gained knowledge.
