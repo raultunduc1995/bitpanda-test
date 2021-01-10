@@ -6,6 +6,7 @@ sealed class Wallet(
     open var balance: Double,
     open val isDefault: Boolean,
     open val deleted: Boolean,
+    val currencyId: String
 ) {
     //todo implement me
     fun reduceBalance(amount: Double) {
@@ -41,7 +42,7 @@ data class MetalWallet(
     override val isDefault: Boolean = false,
     override val deleted: Boolean = false,
     val metalId: String = "",
-) : Wallet(id, name, balance, isDefault, deleted)
+) : Wallet(id, name, balance, isDefault, deleted, metalId)
 
 data class FiatWallet(
     override val id: String = "",
@@ -50,7 +51,7 @@ data class FiatWallet(
     override val isDefault: Boolean = false,
     override val deleted: Boolean = false,
     val fiatId: String = "",
-) : Wallet(id, name, balance, isDefault, deleted)
+) : Wallet(id, name, balance, isDefault, deleted, fiatId)
 
 data class CryptocoinWallet(
     override val id: String = "",
@@ -59,4 +60,4 @@ data class CryptocoinWallet(
     override val isDefault: Boolean = false,
     override val deleted: Boolean = false,
     val cryptocoinId: String = "",
-) : Wallet(id, name, balance, isDefault, deleted)
+) : Wallet(id, name, balance, isDefault, deleted, cryptocoinId)

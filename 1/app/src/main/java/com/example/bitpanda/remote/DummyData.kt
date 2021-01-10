@@ -5,18 +5,18 @@ import com.example.bitpanda.model.*
 object DummyData {
         val dummyMetalWalletList = listOf(
             MetalWallet(
-                id = "1",
-                name = "Gold Wallet 1",
-                balance = 133.729,
-                isDefault = true,
-                metalId = "4",
-                deleted = false
-            ),
-            MetalWallet(
                 id = "2",
                 name = "Gold Wallet 2",
                 balance = 2043.4340,
                 isDefault = false,
+                metalId = "4",
+                deleted = false
+            ),
+            MetalWallet(
+                id = "1",
+                name = "Gold Wallet 1",
+                balance = 133.729,
+                isDefault = true,
                 metalId = "4",
                 deleted = false
             ),

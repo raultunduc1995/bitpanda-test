@@ -1,7 +1,6 @@
 package com.example.bitpanda.repository
 
 import com.example.bitpanda.model.*
-import com.example.bitpanda.model.Currency
 import com.example.bitpanda.remote.DummyWebService
 import java.util.*
 
@@ -42,39 +41,75 @@ class Repository(val webservice: DummyWebService) {
     }
 
     fun getWalletsInFiatCurrency(): List<BitpandaData> {
-        val fiatWallets = webservice.getFiatWallets().filter { !it.deleted }
+        var fiatWallets = webservice.getFiatWallets()
+            .filter { !it.deleted }
+
+        fiatWallets = sortByCurrencyAndBalance(fiatWallets)
 
         return fiatWallets.map { wallet ->
-            BitpandaData(wallet, currency = getCurrency(wallet))
+            BitpandaData(wallet, currency = getFiatCurrency(wallet))
         }
     }
 
     fun getWalletsInMetalCurrency(): List<BitpandaData> {
-        val metalWallets = webservice.getMetalWallets().filter { !it.deleted }
+        var metalWallets = webservice.getMetalWallets()
+            .filter { !it.deleted }
+
+        metalWallets = sortByCurrencyAndBalance(metalWallets)
 
         return metalWallets.map { wallet ->
-            BitpandaData(wallet, currency = getCurrency(wallet))
+            BitpandaData(wallet, currency = getMetalCurrency(wallet))
         }
     }
 
     fun getWalletsInCryptocoinCurrency(): List<BitpandaData> {
-        val cryptocoinWallets = webservice.getCryptoWallets().filter { !it.deleted }
+        var cryptocoinWallets = webservice.getCryptoWallets()
+            .filter { !it.deleted }
+
+        cryptocoinWallets = sortByCurrencyAndBalance(cryptocoinWallets)
 
         return cryptocoinWallets.map { wallet ->
-            BitpandaData(wallet, currency = getCurrency(wallet))
+            BitpandaData(wallet, currency = getCryptocoinCurrency(wallet))
         }
     }
 
-    private fun getCurrency(wallet: Wallet): Currency {
-        val currencies = webservice.getCurrencies()
+    private fun getFiatCurrency(wallet: FiatWallet): Fiat {
+        var fiats = webservice.getFiats()
 
-        return when (wallet) {
-            is MetalWallet ->
-                currencies.first { it is Metal && wallet.metalId == it.id }
-            is FiatWallet ->
-                currencies.first { it is Fiat && wallet.fiatId == it.id }
-            is CryptocoinWallet ->
-                currencies.first { it is Cryptocoin && wallet.cryptocoinId == it.id }
+        return fiats.first { it.id == wallet.fiatId }
+    }
+
+    private fun getMetalCurrency(wallet: MetalWallet): Metal {
+        val metals = webservice.getMetals()
+
+        return metals.first { it.id == wallet.metalId }
+    }
+
+    private fun getCryptocoinCurrency(wallet: CryptocoinWallet): Cryptocoin {
+        val cryptocoins = webservice.getCryptocoins()
+
+        return cryptocoins.first { it.id == wallet.cryptocoinId }
+    }
+
+    private fun <T : Wallet> sortByCurrencyAndBalance(wallets: List<T>): List<T> {
+        val walletsToSort = wallets.toMutableList()
+
+        for (i in walletsToSort.indices) {
+            for (j in i + 1 until walletsToSort.size) {
+                val iWallet = walletsToSort[i]
+                val jWallet = walletsToSort[j]
+                val isNotSorted: Boolean =
+                    iWallet.currencyId == jWallet.currencyId &&
+                            iWallet.balance > jWallet.balance
+
+                if (isNotSorted) {
+                    for (k in j downTo i + 1)
+                        walletsToSort[k] = walletsToSort[k - 1]
+                    walletsToSort[i] = jWallet
+                }
+            }
         }
+
+        return walletsToSort
     }
 }

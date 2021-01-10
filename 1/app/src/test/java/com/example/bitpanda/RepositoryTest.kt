@@ -65,10 +65,33 @@ class RepositoryTest {
 
         //When
         val euroWallet = bitpandaData.firstOrNull { it.wallet.name.contains("EUR Wallet") }
+        val cryptoWallet = bitpandaData.firstOrNull { it.wallet.name.contains("Ripple") }
 
         //Then
         assert(euroWallet != null)
         assert(euroWallet?.currency?.name == "Euro")
         assert(euroWallet?.currency?.symbol == "EUR")
+        assert(cryptoWallet != null)
+        assert(cryptoWallet?.currency?.name == "Ripple")
+        assert(cryptoWallet?.currency?.symbol == "XRP")
+    }
+
+    @Test
+    fun `Test if bitpanda data is sorted`() {
+        //Before
+        val bitpandaData = repository.getBitpandaData()
+
+        //Then
+        for (i in 0 until bitpandaData.size - 1) {
+            val (currentDataWallet, currentDataCurrency) = bitpandaData[i]
+            val (nextDataWallet, nextDataCurrency) = bitpandaData[i + 1]
+
+            if (
+                currentDataCurrency.javaClass.name == nextDataCurrency.javaClass.name &&
+                        currentDataCurrency.id == nextDataCurrency.id
+            ) {
+                assert(currentDataWallet.balance < nextDataWallet.balance)
+            }
+        }
     }
 }
